@@ -2,7 +2,7 @@
 // ignore_for_file: type=lint
 import 'package:firebase_core/firebase_core.dart' show FirebaseOptions;
 import 'package:flutter/foundation.dart'
-    show defaultTargetPlatform, kIsWeb, TargetPlatform;
+    show defaultTargetPlatform, TargetPlatform;
 
 /// Default [FirebaseOptions] for use with your Firebase apps.
 ///
@@ -16,9 +16,6 @@ import 'package:flutter/foundation.dart'
 /// ```
 class DefaultFirebaseOptions {
   static FirebaseOptions get currentPlatform {
-    if (kIsWeb) {
-      return web;
-    }
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return android;
@@ -40,52 +37,41 @@ class DefaultFirebaseOptions {
     }
   }
 
-  static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyD1R_Di9PuTWX1MQsfWC4WI3IscQOhML6g',
-    appId: '1:44519268248:web:c82ec34fab69abd05cd5ed',
-    messagingSenderId: '44519268248',
-    projectId: 'inventory-app-97986',
-    authDomain: 'inventory-app-97986.firebaseapp.com',
-    storageBucket: 'inventory-app-97986.firebasestorage.app',
-  );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyD3iVupz_6VCXCcMVsdtymewk64RP2vNc4',
-    appId: '1:44519268248:android:a1c89b4c11a6bfac5cd5ed',
-    messagingSenderId: '44519268248',
-    projectId: 'inventory-app-97986',
-    storageBucket: 'inventory-app-97986.firebasestorage.app',
+    apiKey: 'AIzaSyArGt-1exIOM-qUMNwZO2DabNsYWkPZKf0',
+    appId: '1:760996782474:android:0e1e3f1a5e93f83ed1a873',
+    messagingSenderId: '760996782474',
+    projectId: 'inventory-tracker-tejas-tech',
+    storageBucket: 'inventory-tracker-tejas-tech.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyCWPBL0cFnazpXtcNyWu3ZxCFoKzH6MVHM',
-    appId: '1:44519268248:ios:24286480b2c4baa95cd5ed',
-    messagingSenderId: '44519268248',
-    projectId: 'inventory-app-97986',
-    storageBucket: 'inventory-app-97986.firebasestorage.app',
-    androidClientId: '44519268248-80sn0pqil6oc1c70tgthr10uckuuc6qo.apps.googleusercontent.com',
-    iosClientId: '44519268248-5bplpnheq8399mcj147g85797p00jmtb.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAmmilcl1SeudF9TmEwOwi24N6f17jI-8U',
+    appId: '1:760996782474:ios:082c305249120526d1a873',
+    messagingSenderId: '760996782474',
+    projectId: 'inventory-tracker-tejas-tech',
+    storageBucket: 'inventory-tracker-tejas-tech.firebasestorage.app',
     iosBundleId: 'com.tejastech.inventorytracker',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyCWPBL0cFnazpXtcNyWu3ZxCFoKzH6MVHM',
-    appId: '1:44519268248:ios:24286480b2c4baa95cd5ed',
-    messagingSenderId: '44519268248',
-    projectId: 'inventory-app-97986',
-    storageBucket: 'inventory-app-97986.firebasestorage.app',
-    androidClientId: '44519268248-80sn0pqil6oc1c70tgthr10uckuuc6qo.apps.googleusercontent.com',
-    iosClientId: '44519268248-5bplpnheq8399mcj147g85797p00jmtb.apps.googleusercontent.com',
+    apiKey: 'AIzaSyAmmilcl1SeudF9TmEwOwi24N6f17jI-8U',
+    appId: '1:760996782474:ios:082c305249120526d1a873',
+    messagingSenderId: '760996782474',
+    projectId: 'inventory-tracker-tejas-tech',
+    storageBucket: 'inventory-tracker-tejas-tech.firebasestorage.app',
     iosBundleId: 'com.tejastech.inventorytracker',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyD1R_Di9PuTWX1MQsfWC4WI3IscQOhML6g',
-    appId: '1:44519268248:web:442ebc266cb8559b5cd5ed',
-    messagingSenderId: '44519268248',
-    projectId: 'inventory-app-97986',
-    authDomain: 'inventory-app-97986.firebaseapp.com',
-    storageBucket: 'inventory-app-97986.firebasestorage.app',
+    apiKey: 'AIzaSyCqbgrVbdSmMCFl3wbzCqe95yNMiFohPY0',
+    appId: '1:760996782474:web:77166762b1b38d65d1a873',
+    messagingSenderId: '760996782474',
+    projectId: 'inventory-tracker-tejas-tech',
+    authDomain: 'inventory-tracker-tejas-tech.firebaseapp.com',
+    storageBucket: 'inventory-tracker-tejas-tech.firebasestorage.app',
+    measurementId: 'G-P9FNN17914',
   );
 
 }

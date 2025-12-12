@@ -1,95 +1,26 @@
 {
   "project_info": {
-    "project_number": "44519268248",
-    "project_id": "inventory-app-97986",
-    "storage_bucket": "inventory-app-97986.firebasestorage.app"
+    "project_number": "760996782474",
+    "project_id": "inventory-tracker-tejas-tech",
+    "storage_bucket": "inventory-tracker-tejas-tech.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:44519268248:android:2cf31bec73c115175cd5ed",
-        "android_client_info": {
-          "package_name": "com.example.inventory_app"
-        }
-      },
-      "oauth_client": [
-        {
-          "client_id": "44519268248-80sn0pqil6oc1c70tgthr10uckuuc6qo.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.inventory_app",
-            "certificate_hash": "eb3ebd494c6ee381a16f1c15c720d8e8181ba322"
-          }
-        },
-        {
-          "client_id": "44519268248-pkrpkji7rn06u631cpspt8562241i6o3.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.inventory_app",
-            "certificate_hash": "0df6a004eb8b3eaf40aace2be3ed5660fab787ce"
-          }
-        },
-        {
-          "client_id": "44519268248-ka2nm2th6vr8ihk3r9k3f28a97a3vhof.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
-      "api_key": [
-        {
-          "current_key": "AIzaSyD3iVupz_6VCXCcMVsdtymewk64RP2vNc4"
-        }
-      ],
-      "services": {
-        "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "44519268248-ka2nm2th6vr8ihk3r9k3f28a97a3vhof.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "44519268248-8so50hljtd89q5okuhsj6n3v8lvs02cf.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.inventoryApp"
-              }
-            }
-          ]
-        }
-      }
-    },
-    {
-      "client_info": {
-        "mobilesdk_app_id": "1:44519268248:android:a1c89b4c11a6bfac5cd5ed",
+        "mobilesdk_app_id": "1:760996782474:android:0e1e3f1a5e93f83ed1a873",
         "android_client_info": {
           "package_name": "com.tejastech.inventorytracker"
         }
       },
-      "oauth_client": [
-        {
-          "client_id": "44519268248-ka2nm2th6vr8ihk3r9k3f28a97a3vhof.apps.googleusercontent.com",
-          "client_type": 3
-        }
-      ],
+      "oauth_client": [],
       "api_key": [
         {
-          "current_key": "AIzaSyD3iVupz_6VCXCcMVsdtymewk64RP2vNc4"
+          "current_key": "AIzaSyArGt-1exIOM-qUMNwZO2DabNsYWkPZKf0"
         }
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": [
-            {
-              "client_id": "44519268248-ka2nm2th6vr8ihk3r9k3f28a97a3vhof.apps.googleusercontent.com",
-              "client_type": 3
-            },
-            {
-              "client_id": "44519268248-8so50hljtd89q5okuhsj6n3v8lvs02cf.apps.googleusercontent.com",
-              "client_type": 2,
-              "ios_info": {
-                "bundle_id": "com.example.inventoryApp"
-              }
-            }
-          ]
+          "other_platform_oauth_client": []
         }
       }
     }
