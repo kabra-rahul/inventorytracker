@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "inventory-tracker-tejas-tech",
+          "appId": "1:760996782474:android:0e1e3f1a5e93f83ed1a873",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "inventory-tracker-tejas-tech",
+          "configurations": {
+            "android": "1:760996782474:android:0e1e3f1a5e93f83ed1a873",
+            "ios": "1:760996782474:ios:082c305249120526d1a873",
+            "macos": "1:760996782474:ios:082c305249120526d1a873",
+            "windows": "1:760996782474:web:77166762b1b38d65d1a873"
+          }
+        }
+      }
+    }
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "disallowLegacyRuntimeConfig": true,
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint"
+      ]
+    }
+  ]
+}

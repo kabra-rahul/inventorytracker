@@ -336,7 +336,7 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                                         },
                                                       ),
                                                     )),
-                                                    DataCell(Text(batch.supplierName)),
+                                                    DataCell(Text(batch.supplierName.isEmpty ? 'N/A' :batch.supplierName)),
                                                     DataCell(Text(batch.batchNumber)),
                                                     DataCell(
                                                       SizedBox(
