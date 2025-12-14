@@ -210,7 +210,7 @@ class StockDetailsPage extends ConsumerWidget {
 
                                 return _buildBatchRow(
                                   context,
-                                  supplier: batch.supplierName,
+                                  supplier: batch.supplierName.isEmpty ? 'N/A' :batch.supplierName,
                                   lotNo: batch.batchNumber,
                                   quantity: quantityText,
                                   rate: rateText,

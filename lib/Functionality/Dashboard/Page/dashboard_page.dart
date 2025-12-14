@@ -85,7 +85,6 @@ class DashboardPage extends ConsumerWidget {
 
     final params = (warehouseId: selectedWarehouseId ?? '', categoryId: '');
     final productAsync = ref.watch(productCountProvider(params));
-    //print(queryParams);
 
     return Scaffold(
       drawer: app.when(

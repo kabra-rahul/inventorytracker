@@ -224,7 +224,7 @@ class PaymentPage extends ConsumerWidget {
             const SizedBox(height: 12),
             _buildFeatureItem('Extend plan validity by 1 year', true),
             const SizedBox(height: 16),
-            if (plan == PlanConstants.paidPlan  && isAdmin)
+            if ((plan == PlanConstants.paidPlan || plan == PlanConstants.renewalPlan)  && isAdmin)
               CustomElevatedButton(
                 text: isLoading ? "Processing..." : "Renew for ₹1,000",
                 onPressed: isLoading ? null : onRenew,

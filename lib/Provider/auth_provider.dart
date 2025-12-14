@@ -12,7 +12,6 @@ final authStateProvider = StreamProvider<User?>((ref) {
   final authService = ref.watch(authServiceProvider);
 
   return authService.getCurrentUserStream().asyncMap((user) async {
-    //print("AUTH STREAM EMIT: $user");
     if (user != null) {
       try {
         //await user.reload();
