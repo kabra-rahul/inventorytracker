@@ -231,9 +231,9 @@ class _TransactionReportPageState extends ConsumerState<TransactionReportPage> {
                         });
                       },
                       style: ButtonStyle(
-                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
-                          backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.blue : Colors.grey[200]),
-                          foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.white : Colors.black87,)
+                        shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                        backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.blue : Colors.grey[200]),
+                        foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.white : Colors.black87,)
                       ),
                       child: Text(SortOrder.Ascending.name),
                     ),
@@ -400,7 +400,6 @@ class _TransactionReportPageState extends ConsumerState<TransactionReportPage> {
     );
 
     final reportData = await ref.read(transactionReportDataProvider(params).future);
-
     final excel = Excel.createExcel();
     Sheet sheet = excel['Transaction Report'];
     excel.delete('Sheet1');
