@@ -58,161 +58,159 @@ class TransactionService {
   }
 
 
+  Map<String, dynamic> _emptyRecentMovements() => {
+    TransactionDetailsConstants.transactionDocuments: <StockMovementModel>[],
+    TransactionDetailsConstants.productNames : {},
+    TransactionDetailsConstants.unitSymbols  : {},
+    TransactionDetailsConstants.supplierNames: {},
+    TransactionDetailsConstants.clientNames  : {},
+    TransactionDetailsConstants.batchNumber  : {},
+    TransactionDetailsConstants.batchToSupplierId: {},
+  };
+
   // Load recent 5 movements for a type (inward or outward)
-  Future<Map<String, dynamic>> getRecentMovements({
+  Stream<Map<String, dynamic>> getRecentMovements({
     required String warehouseId,
     required String type, // inward or outward
-  }) async {
+  }) {
 
     if (_companyId.isEmpty || warehouseId.isEmpty) {
-    // Return an empty map gracefully if essential IDs are missing
-    return {
-            TransactionDetailsConstants.transactionDocuments: <StockMovementModel>[],
-            TransactionDetailsConstants.productNames : {},
-            TransactionDetailsConstants.unitSymbols  : {},
-            TransactionDetailsConstants.supplierNames: {},
-            TransactionDetailsConstants.clientNames  : {},
-            TransactionDetailsConstants.batchNumber  : {},
-            TransactionDetailsConstants.batchToSupplierId: {},
-          };
+      // Return an empty map gracefully if essential IDs are missing
+      return Stream.value(_emptyRecentMovements());
     }
 
     // 1️⃣ Load recent 5 stockMovements
-    final movementSnap = await _transactionCollectionRef()
+    return _transactionCollectionRef()
         .where(FirestoreConstants.transactionWarehouseIdField, isEqualTo: warehouseId)
         .where(FirestoreConstants.transactionTypeField, isEqualTo: type)
         .orderBy(FirestoreConstants.transactionDateField, descending: true)
         .limit(5)
-        .get();
+        .snapshots()
+        .asyncMap((movementSnap) async {
 
-    if (movementSnap.docs.isEmpty) {
-      // Return an empty map gracefully if essential IDs are missing
-      return {
-        TransactionDetailsConstants.transactionDocuments: <StockMovementModel>[],
-        TransactionDetailsConstants.productNames : {},
-        TransactionDetailsConstants.unitSymbols  : {},
-        TransactionDetailsConstants.supplierNames: {},
-        TransactionDetailsConstants.clientNames  : {},
-        TransactionDetailsConstants.batchNumber  : {},
-        TransactionDetailsConstants.batchToSupplierId: {},
-      };
-    }
+      if (movementSnap.docs.isEmpty) {
+        // Return an empty map gracefully if essential IDs are missing
+        return _emptyRecentMovements();
+      }
 
-    final movements = movementSnap.docs.map((d) {
-      return StockMovementModel.fromMap(d.id, d.data());
-    }).toList();
-
-    // 2️⃣ Get product names
-    final List<String> productIdsInMovements = movements
-        .map((m) => m.productId)
-        .toSet()
-        .where((id) => id.isNotEmpty)
-        .toList();
-
-    Map<String, String> productNames = {};
-    Map<String, String> productUnitSymbols  = {};
-
-    if (productIdsInMovements.isNotEmpty) {
-      final productSnap = await _productCollectionRef()
-          .where(FieldPath.documentId, whereIn: productIdsInMovements)
-          .get();
-      productNames = {
-        for (var doc in productSnap.docs) doc.id: doc.data()[FirestoreConstants.nameField] ?? ''
-      };
-
-      final Map<String, String> productUnitIds = {
-        for (var doc in productSnap.docs) doc.id: doc.data()[FirestoreConstants.productUnitIdField] ?? ''
-      };
-
-      final unitSnap = await _db
-          .collection(FirestoreConstants.companyCollection)
-          .doc(_companyId)
-          .collection(FirestoreConstants.unitCollection).get();
-
-      final Map<String, String> unitSymbols = {
-        for (var doc in unitSnap.docs)
-          doc.id: doc.data()[FirestoreConstants.symbolField] ?? ''
-      };
-
-      productUnitSymbols = {
-        for (var entry in productUnitIds.entries)
-          entry.key: unitSymbols[entry.value] ?? ''
-      };
-    }
-
-    Map<String, String> clientNames = {};
-
-    if(type == MovementConstants.outwardMovement) {
-      final List<String> clientIdsInMovements = movements
-          .map((m) => m.clientId)
-          .where((id) => id.isNotEmpty)
-          .toSet()
+      final movements = movementSnap.docs
+          .map((d) => StockMovementModel.fromMap(d.id, d.data()))
           .toList();
 
-      if(clientIdsInMovements.isNotEmpty) {
-        final clientSnap  = await _clientCollectionRef()
-            .where(FieldPath.documentId, whereIn: clientIdsInMovements)
+      // 2️⃣ Get product names
+      final List<String> productIdsInMovements = movements
+          .map((m) => m.productId)
+          .toSet()
+          .where((id) => id.isNotEmpty)
+          .toList();
+
+      Map<String, String> productNames = {};
+      Map<String, String> productUnitSymbols  = {};
+
+      if (productIdsInMovements.isNotEmpty) {
+        final productSnap = await _productCollectionRef()
+            .where(FieldPath.documentId, whereIn: productIdsInMovements)
             .get();
-        clientNames = {
-          for (var doc in clientSnap.docs) doc.id: doc.data()[FirestoreConstants.companyNameField] ?? ''
+
+        productNames = {
+          for (var doc in productSnap.docs) doc.id: doc.data()[FirestoreConstants.nameField] ?? ''
+        };
+
+        final Map<String, String> productUnitIds = {
+          for (var doc in productSnap.docs) doc.id: doc.data()[FirestoreConstants.productUnitIdField] ?? ''
+        };
+
+        final unitSnap = await _db
+            .collection(FirestoreConstants.companyCollection)
+            .doc(_companyId)
+            .collection(FirestoreConstants.unitCollection)
+            .get();
+
+        final Map<String, String> unitSymbols = {
+          for (var doc in unitSnap.docs)
+            doc.id: doc.data()[FirestoreConstants.symbolField] ?? ''
+        };
+
+        productUnitSymbols = {
+          for (var entry in productUnitIds.entries)
+            entry.key: unitSymbols[entry.value] ?? ''
         };
       }
-    }
 
-    final List<String> uniqueStockIds = movements.map((m) => m.stockId).toSet().toList();
-    // 4️⃣ Parallel load all batch collections
-    final batchFutures = uniqueStockIds.map((stockId) async {
-      final batchSnap = await _db
-          .collection(FirestoreConstants.companyCollection)
-          .doc(_companyId)
-          .collection(FirestoreConstants.warehouseCollection)
-          .doc(warehouseId)
-          .collection(FirestoreConstants.stockCollection)
-          .doc(stockId)
-          .collection(FirestoreConstants.batchCollection)
-          .get();
-      return batchSnap.docs;
-    }).toList();
+      Map<String, String> clientNames = {};
 
-    final allBatchDocsLists = await Future.wait(batchFutures);
+      if(type == MovementConstants.outwardMovement) {
+        final List<String> clientIdsInMovements = movements
+            .map((m) => m.clientId)
+            .where((id) => id.isNotEmpty)
+            .toSet()
+            .toList();
 
-    // Flatten batch docs
-    final allBatchDocs = allBatchDocsLists.expand((list) => list).toList();
+        if(clientIdsInMovements.isNotEmpty) {
+          final clientSnap  = await _clientCollectionRef()
+              .where(FieldPath.documentId, whereIn: clientIdsInMovements)
+              .get();
 
-    final batchNumber =  {
-      for (var doc in allBatchDocs) doc.id: doc.data()[FirestoreConstants.batchNumberField]?.toString() ?? ''
-    };
+          clientNames = {
+            for (var doc in clientSnap.docs) doc.id: doc.data()[FirestoreConstants.companyNameField] ?? ''
+          };
+        }
+      }
 
-// Create map: batchId → supplierId
-    final batchToSupplierId = {
-      for (var doc in allBatchDocs)
-        doc.id: (doc.data())[FirestoreConstants.batchSupplierIdField] ?? ''
-    };
+      final List<String> uniqueStockIds = movements.map((m) => m.stockId).toSet().toList();
+      // 4️⃣ Parallel load all batch collections
+      final batchFutures = uniqueStockIds.map((stockId) async {
+        final batchSnap = await _db
+            .collection(FirestoreConstants.companyCollection)
+            .doc(_companyId)
+            .collection(FirestoreConstants.warehouseCollection)
+            .doc(warehouseId)
+            .collection(FirestoreConstants.stockCollection)
+            .doc(stockId)
+            .collection(FirestoreConstants.batchCollection)
+            .get();
+        return batchSnap.docs;
+      }).toList();
 
-    final allSupplierIds = batchToSupplierId.values.where((id) => id.isNotEmpty).toSet().toList();
+      final allBatchDocsLists = await Future.wait(batchFutures);
+      // Flatten batch docs
+      final allBatchDocs = allBatchDocsLists.expand((list) => list).toList();
 
-    // 6️⃣ Load supplier names in one query (if <= 10 suppliers)
-    Map<String, String> supplierNames = {};
-
-    if (allSupplierIds.isNotEmpty) {
-      final supplierSnap = await _supplierCollectionRef()
-          .where(FieldPath.documentId, whereIn: allSupplierIds)
-          .get();
-
-      supplierNames = {
-        for (var doc in supplierSnap.docs) doc.id: doc.data()[FirestoreConstants.companyNameField] ?? ''
+      final batchNumber =  {
+        for (var doc in allBatchDocs) doc.id: doc.data()[FirestoreConstants.batchNumberField]?.toString() ?? ''
       };
-    }
 
-    return {
-      TransactionDetailsConstants.transactionDocuments: movements,
-      TransactionDetailsConstants.productNames        : productNames,
-      TransactionDetailsConstants.unitSymbols         : productUnitSymbols,
-      TransactionDetailsConstants.supplierNames       : supplierNames,
-      TransactionDetailsConstants.clientNames         : clientNames,
-      TransactionDetailsConstants.batchNumber         : batchNumber,
-      TransactionDetailsConstants.batchToSupplierId   : batchToSupplierId,
-    };
+      // Create map: batchId → supplierId
+      final batchToSupplierId = {
+        for (var doc in allBatchDocs)
+          doc.id: (doc.data())[FirestoreConstants.batchSupplierIdField] ?? ''
+      };
+
+      final allSupplierIds = batchToSupplierId.values.where((id) => id.isNotEmpty).toSet().toList();
+
+      // 6️⃣ Load supplier names in one query (if <= 10 suppliers)
+      Map<String, String> supplierNames = {};
+
+      if (allSupplierIds.isNotEmpty) {
+        final supplierSnap = await _supplierCollectionRef()
+            .where(FieldPath.documentId, whereIn: allSupplierIds)
+            .get();
+
+        supplierNames = {
+          for (var doc in supplierSnap.docs) doc.id: doc.data()[FirestoreConstants.companyNameField] ?? ''
+        };
+      }
+
+      return {
+        TransactionDetailsConstants.transactionDocuments: movements,
+        TransactionDetailsConstants.productNames        : productNames,
+        TransactionDetailsConstants.unitSymbols         : productUnitSymbols,
+        TransactionDetailsConstants.supplierNames       : supplierNames,
+        TransactionDetailsConstants.clientNames         : clientNames,
+        TransactionDetailsConstants.batchNumber         : batchNumber,
+        TransactionDetailsConstants.batchToSupplierId   : batchToSupplierId,
+      };
+    });
   }
 
 

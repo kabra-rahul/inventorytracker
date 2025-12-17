@@ -5,6 +5,7 @@ import 'package:excel/excel.dart' hide Border; // Hide Border to avoid conflict
 import 'package:flutter/material.dart';
 import 'package:inventorytracker/Functionality/Transaction/Provider/transaction_provider.dart';
 import 'package:inventorytracker/Shared/Constants/snackbar_color.dart';
+import 'package:inventorytracker/Shared/Constants/sort_enums.dart';
 import 'package:inventorytracker/Shared/Util/excel_style.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:path_provider/path_provider.dart';
@@ -27,6 +28,7 @@ class SupplierSellReportPage extends ConsumerStatefulWidget {
 
 class _SupplierSellReportPageState extends ConsumerState<SupplierSellReportPage> {
   final _formKey = GlobalKey<FormState>();
+  SortOrder? _sortOrder = SortOrder.Descending;
 
   @override
   Widget build(BuildContext context) {
@@ -148,6 +150,51 @@ class _SupplierSellReportPageState extends ConsumerState<SupplierSellReportPage>
                   }
                   return null;
                 },
+              ),
+              const SizedBox(height: 20),
+              const Text(
+                'Sort Type',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioMenuButton<SortOrder>(
+                      value: SortOrder.Ascending,
+                      groupValue: _sortOrder,
+                      onChanged: (selectedOrder) {
+                        setState(() {
+                          _sortOrder = selectedOrder;
+                        });
+                      },
+                      style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                          backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.blue : Colors.grey[200]),
+                          foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.white : Colors.black87,)
+                      ),
+                      child: Text(SortOrder.Ascending.name),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: RadioMenuButton<SortOrder>(
+                      value: SortOrder.Descending,
+                      groupValue: _sortOrder,
+                      onChanged: (selectedOrder) {
+                        setState(() {
+                          _sortOrder = selectedOrder;
+                        });
+                      },
+                      style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                          backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Descending ? Colors.blue : Colors.grey[200]),
+                          foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Descending ? Colors.white : Colors.black87,)
+                      ),
+                      child: Text(SortOrder.Descending.name),
+                    ),
+                  ),
+                ],
               ),
               const SizedBox(height: 30),
 
@@ -311,6 +358,12 @@ class _SupplierSellReportPageState extends ConsumerState<SupplierSellReportPage>
       final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: headerRowIndex));
       cell.cellStyle = kReportHeaderStyle;
       sheet.setColumnAutoFit(col);
+    }
+
+    if(_sortOrder == SortOrder.Ascending) {
+      reportData.sort((a, b) => a.date.compareTo(b.date));
+    } else {
+      reportData.sort((a, b) => b.date.compareTo(a.date));
     }
 
     for (final transaction in reportData) {

@@ -284,22 +284,40 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                           fontSize: 18,
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
-
+                                      const Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.swipe_left, size: 16, color: Colors.grey),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Scroll horizontally to view all batch data',
+                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                       Scrollbar(
                                         controller: horizontalScrollController,
                                         thumbVisibility: true,
                                         trackVisibility: true,
+                                        thickness: 6.0,
                                         child: SingleChildScrollView(
                                           controller: horizontalScrollController,
                                           scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            width: 700,
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10), // Sets rounded corners
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
                                             child: DataTable(
                                               columnSpacing: 10,
                                               dataRowMinHeight: 50,
                                               dataRowMaxHeight: 70,
                                               headingRowHeight: 58,
+                                              horizontalMargin: 5.0,
+                                              dataRowColor: WidgetStateProperty.all(Colors.grey.shade200) ,
+                                              headingRowColor:  WidgetStateProperty.all(Colors.blue.shade200),
                                               columns: [
                                                 const DataColumn(label: SizedBox(width: 50,  child: Text(''))),
                                                 const DataColumn(label: SizedBox(width: 180, child: Text('Suppliers Name'))),
@@ -352,7 +370,9 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                                             onChanged: (value) {
                                                               setState(() {});
                                                             },
-                                                            decoration: const InputDecoration(
+                                                            decoration: InputDecoration(
+                                                              filled: isSelected ? true:false,
+                                                              fillColor: Colors.white,
                                                               border: OutlineInputBorder(),
                                                               contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                                             ),
@@ -379,7 +399,6 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                         ),
                                       ),
                                       const SizedBox(height: 20),
-
                                       CustomTextField(
                                         label: 'Price per $unitSymbol',
                                         hintText: 'Enter Selling Price Per $unitSymbol',

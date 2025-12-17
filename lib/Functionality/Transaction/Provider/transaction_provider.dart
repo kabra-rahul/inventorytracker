@@ -40,11 +40,17 @@ final transactionServiceProvider = FutureProvider<TransactionService>((ref) asyn
 
 
 
-final recentMovementsProvider = FutureProvider.family<Map<String, dynamic>, MovementQueryParams>((ref, args) async {
-  final service = await ref.watch(transactionServiceProvider.future);
-  return service.getRecentMovements(
-    warehouseId: args.warehouseId,
-    type       : args.type,
+final recentMovementsProvider = StreamProvider.autoDispose.family<Map<String, dynamic>, MovementQueryParams>((ref, args) {
+  final serviceAsync = ref.watch(transactionServiceProvider);
+  return serviceAsync.when(
+    data: (service) {
+      return service.getRecentMovements(
+        warehouseId: args.warehouseId,
+        type: args.type,
+      );
+    },
+    loading: () => const Stream.empty(),
+    error: (_, _) => const Stream.empty(),
   );
 });
 

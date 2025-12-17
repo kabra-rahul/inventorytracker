@@ -37,13 +37,26 @@ final suppliersMapProvider = FutureProvider<Map<String, String>>((ref) async {
 });
 
 
-final batchListProvider = FutureProvider.family<List<BatchModel>, BatchQuery>((ref, query) async {
-  final service = await ref.read(stockMovementServiceProvider.future);
-  final supplierMap = await ref.watch(suppliersMapProvider.future);
-  return service.getBatches(
-      query.warehouseId,
-      query.productId,
-      supplierMap
+final batchListProvider = StreamProvider.autoDispose.family<List<BatchModel>, BatchQuery>((ref, query) {
+  final serviceAsync = ref.read(stockMovementServiceProvider);
+  final supplierMapAsync = ref.watch(suppliersMapProvider);
+
+  return serviceAsync.when(
+    data: (service) {
+      return supplierMapAsync.when(
+        data: (supplierMap) {
+          return service.watchBatches(
+            query.warehouseId,
+            query.productId,
+            supplierMap,
+          );
+        },
+        loading: () => const Stream.empty(),
+        error: (_, _) => const Stream.empty(),
+      );
+    },
+    loading: () => const Stream.empty(),
+    error: (_, _) => const Stream.empty(),
   );
 });
 

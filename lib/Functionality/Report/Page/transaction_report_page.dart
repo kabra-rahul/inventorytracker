@@ -12,6 +12,7 @@ import 'package:inventorytracker/Functionality/User/Model/app_user_model.dart';
 import 'package:inventorytracker/Functionality/User/Provider/user_provider.dart'; // For userListProvider
 import 'package:inventorytracker/Shared/Constants/movement_constants.dart'; // For MovementConstants
 import 'package:inventorytracker/Shared/Constants/snackbar_color.dart';
+import 'package:inventorytracker/Shared/Constants/sort_enums.dart';
 import 'package:inventorytracker/Shared/Util/excel_style.dart';
 import 'package:inventorytracker/Shared/Widgets/custom_text_field.dart';
 import 'package:open_filex/open_filex.dart';
@@ -28,6 +29,7 @@ class TransactionReportPage extends ConsumerStatefulWidget {
 
 class _TransactionReportPageState extends ConsumerState<TransactionReportPage> {
   final _formKey = GlobalKey<FormState>();
+  SortOrder? _sortOrder = SortOrder.Descending;
 
   @override
   Widget build(BuildContext context) {
@@ -211,6 +213,51 @@ class _TransactionReportPageState extends ConsumerState<TransactionReportPage> {
                   );
                 },
               ),
+              const SizedBox(height: 20),
+              const Text(
+                'Sort Type',
+                style: TextStyle(fontWeight: FontWeight.w500),
+              ),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(
+                    child: RadioMenuButton<SortOrder>(
+                      value: SortOrder.Ascending,
+                      groupValue: _sortOrder,
+                      onChanged: (selectedOrder) {
+                        setState(() {
+                          _sortOrder = selectedOrder;
+                        });
+                      },
+                      style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                          backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.blue : Colors.grey[200]),
+                          foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Ascending ? Colors.white : Colors.black87,)
+                      ),
+                      child: Text(SortOrder.Ascending.name),
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: RadioMenuButton<SortOrder>(
+                      value: SortOrder.Descending,
+                      groupValue: _sortOrder,
+                      onChanged: (selectedOrder) {
+                        setState(() {
+                          _sortOrder = selectedOrder;
+                        });
+                      },
+                      style: ButtonStyle(
+                          shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(8))),
+                          backgroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Descending ? Colors.blue : Colors.grey[200]),
+                          foregroundColor: WidgetStatePropertyAll(_sortOrder == SortOrder.Descending ? Colors.white : Colors.black87,)
+                      ),
+                      child: Text(SortOrder.Descending.name),
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 30),
 
               // Generate Report Button
@@ -378,6 +425,12 @@ class _TransactionReportPageState extends ConsumerState<TransactionReportPage> {
       final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: col, rowIndex: headerRowIndex));
       cell.cellStyle = kReportHeaderStyle;
       sheet.setColumnAutoFit(col);
+    }
+
+    if(_sortOrder == SortOrder.Ascending) {
+      reportData.sort((a, b) => a.date.compareTo(b.date));
+    } else {
+      reportData.sort((a, b) => b.date.compareTo(a.date));
     }
 
     for (final transaction in reportData) {

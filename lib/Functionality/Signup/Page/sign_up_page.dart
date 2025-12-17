@@ -92,7 +92,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
                 controller: passwordC,
                 validator: validatePassword,
                 isPassword: true,
-                hintText: 'Enter your password',
+                hintText: 'Set Password',
               ),
               const SizedBox(height: SizeConstants.spaceBetweenFields),
               CustomTextField(
@@ -103,7 +103,7 @@ class _SignupPageState extends ConsumerState<SignupPage> {
               ),
               const SizedBox(height: SizeConstants.spaceBetweenFields),
               CustomTextField(
-                label: 'GST Number',
+                label: 'GST Number (Optional)',
                 controller: gstC,
                 validator: (value) {
                   if (value == null || value.trim().isEmpty) return null; // Optional field
