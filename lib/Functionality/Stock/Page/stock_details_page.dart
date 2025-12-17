@@ -174,6 +174,7 @@ class StockDetailsPage extends ConsumerWidget {
                     child: Scrollbar(
                       controller: horizontalScrollController,
                       thumbVisibility: true,
+                      thickness: 6.0,
                       child: SingleChildScrollView(
                         scrollDirection: Axis.horizontal,
                         controller: horizontalScrollController,

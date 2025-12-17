@@ -284,88 +284,109 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                           fontSize: 18,
                                         ),
                                       ),
-                                      const SizedBox(height: 10),
-
+                                      const Padding(
+                                        padding: EdgeInsets.all(16.0),
+                                        child: Row(
+                                          children: [
+                                            Icon(Icons.swipe_left, size: 16, color: Colors.grey),
+                                            SizedBox(width: 8),
+                                            Text(
+                                              'Scroll horizontally to view all batch data',
+                                              style: TextStyle(color: Colors.grey, fontSize: 12),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
                                       Scrollbar(
                                         controller: horizontalScrollController,
                                         thumbVisibility: true,
                                         trackVisibility: true,
+                                        thickness: 6.0,
                                         child: SingleChildScrollView(
                                           controller: horizontalScrollController,
                                           scrollDirection: Axis.horizontal,
-                                          child: SizedBox(
-                                            width: 700,
-                                            child: DataTable(
-                                              columnSpacing: 10,
-                                              dataRowMinHeight: 50,
-                                              dataRowMaxHeight: 70,
-                                              headingRowHeight: 58,
-                                              columns: [
-                                                const DataColumn(label: SizedBox(width: 50,  child: Text(''))),
-                                                const DataColumn(label: SizedBox(width: 180, child: Text('Suppliers Name'))),
-                                                const DataColumn(label: SizedBox(width: 100, child: Text('Lot Number'), )),
-                                                const DataColumn(label: SizedBox(width: 100, child: Text('Move Quantity'))),
-                                                DataColumn(label: SizedBox(width: 100, child: Center(child: Text('Quantity')))),
-                                                DataColumn(label: SizedBox(width: 100, child: Text('Price Per $unitSymbol'))),
-                                              ],
-                                              rows: availableBatches.map((batch) {
-                                                final isSelected = _selectedBatchQtyControllers.containsKey(batch.batchId);
-                                                final TextEditingController? qtyController = isSelected
-                                                    ? _selectedBatchQtyControllers[batch.batchId]
-                                                    : (() {
-                                                  _dummyController.text = ''; // Side effect: Clears the field visually
-                                                  return _dummyController;    // Return value: The cleared controller
-                                                })();
+                                          child: Card(
+                                            shape: RoundedRectangleBorder(
+                                              borderRadius: BorderRadius.circular(10), // Sets rounded corners
+                                            ),
+                                            clipBehavior: Clip.antiAlias,
+                                              child: DataTable(
+                                                columnSpacing: 10,
+                                                dataRowMinHeight: 50,
+                                                dataRowMaxHeight: 70,
+                                                headingRowHeight: 58,
+                                                horizontalMargin: 5.0,
+                                                dataRowColor: WidgetStateProperty.all(Colors.grey.shade200) ,
+                                                headingRowColor:  WidgetStateProperty.all(Colors.blue.shade200),
+                                                columns: [
+                                                  const DataColumn(label: SizedBox(width: 50,  child: Text(''))),
+                                                  const DataColumn(label: SizedBox(width: 180, child: Text('Suppliers Name'))),
+                                                  const DataColumn(label: SizedBox(width: 100, child: Text('Lot Number'), )),
+                                                  const DataColumn(label: SizedBox(width: 100, child: Text('Move Quantity'))),
+                                                  DataColumn(label: SizedBox(width: 100, child: Center(child: Text('Quantity')))),
+                                                  DataColumn(label: SizedBox(width: 100, child: Text('Price Per $unitSymbol'))),
+                                                ],
+                                                rows: availableBatches.map((batch) {
+                                                  final isSelected = _selectedBatchQtyControllers.containsKey(batch.batchId);
+                                                  final TextEditingController? qtyController = isSelected
+                                                      ? _selectedBatchQtyControllers[batch.batchId]
+                                                      : (() {
+                                                    _dummyController.text = ''; // Side effect: Clears the field visually
+                                                    return _dummyController;    // Return value: The cleared controller
+                                                  })();
 
-                                                return DataRow(
-                                                  key: ValueKey(batch.batchId),
-                                                  selected: isSelected,
-                                                  cells: [
-                                                    DataCell(Center(
-                                                      child: Checkbox(
-                                                        value: isSelected,
-                                                        onChanged: (bool? value) {
-                                                          setState(() {
-                                                            if (value == true) {
-                                                              _selectedBatchQtyControllers[batch.batchId] = TextEditingController(text: '0');
-                                                            } else {
-                                                              _selectedBatchQtyControllers[batch.batchId]?.dispose();
-                                                              _selectedBatchQtyControllers.remove(batch.batchId);
-                                                            }
-                                                          });
-                                                        },
-                                                      ),
-                                                    )),
-                                                    DataCell(Text(batch.supplierName.isEmpty ? 'N/A' :batch.supplierName)),
-                                                    DataCell(Text(batch.batchNumber)),
-                                                    DataCell(
-                                                      SizedBox(
-                                                        width: 80,
-                                                        child: Center(
-                                                          child: TextField(
-                                                            controller: qtyController,
-                                                            enabled: isSelected,
-                                                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-                                                            inputFormatters: [
-                                                              FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
-                                                            ],
-                                                            onChanged: (value) {
-                                                              setState(() {});
-                                                            },
-                                                            decoration: const InputDecoration(
-                                                              border: OutlineInputBorder(),
-                                                              contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                  return DataRow(
+                                                    key: ValueKey(batch.batchId),
+                                                    selected: isSelected,
+                                                    cells: [
+                                                      DataCell(Center(
+                                                        child: Checkbox(
+                                                          value: isSelected,
+                                                          onChanged: (bool? value) {
+                                                            setState(() {
+                                                              if (value == true) {
+                                                                _selectedBatchQtyControllers[batch.batchId] = TextEditingController(text: '0');
+                                                              } else {
+                                                                _selectedBatchQtyControllers[batch.batchId]?.dispose();
+                                                                _selectedBatchQtyControllers.remove(batch.batchId);
+                                                              }
+                                                            });
+                                                          },
+                                                        ),
+                                                      )),
+                                                      DataCell(Text(batch.supplierName.isEmpty ? 'N/A' :batch.supplierName)),
+                                                      DataCell(Text(batch.batchNumber)),
+                                                      DataCell(
+                                                        SizedBox(
+                                                          width: 80,
+                                                          child: Center(
+                                                            child: TextField(
+                                                              controller: qtyController,
+                                                              enabled: isSelected,
+                                                              keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                                                              inputFormatters: [
+                                                                FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
+                                                              ],
+                                                              onChanged: (value) {
+                                                                setState(() {});
+                                                              },
+                                                              decoration: InputDecoration(
+                                                                filled: isSelected ? true:false,
+                                                                fillColor: Colors.white,
+                                                                border: OutlineInputBorder(),
+                                                                contentPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                                              ),
                                                             ),
                                                           ),
                                                         ),
                                                       ),
-                                                    ),
-                                                    DataCell(Center(child: Text(batch.quantity.toStringAsFixed(2)))),
-                                                    DataCell(Center(child: Text(batch.pricePerUnit.toString())))
-                                                  ],
-                                                );
-                                              }).toList(),
-                                            ),
+                                                      DataCell(Center(child: Text(batch.quantity.toStringAsFixed(2)))),
+                                                      DataCell(Center(child: Text(batch.pricePerUnit.toString())))
+                                                    ],
+                                                  );
+                                                }).toList(),
+                                              ),
+
                                           ),
                                         ),
                                       ),
@@ -379,7 +400,6 @@ class _OutwardStockPageState extends ConsumerState<OutwardStockPage> {
                                         ),
                                       ),
                                       const SizedBox(height: 20),
-
                                       CustomTextField(
                                         label: 'Price per $unitSymbol',
                                         hintText: 'Enter Selling Price Per $unitSymbol',

@@ -59,7 +59,7 @@ class SignupService {
             FirestoreConstants.companyCreatedByField: uid,
             FirestoreConstants.companyCreatedOnField: FieldValue.serverTimestamp(),
             FirestoreConstants.companyPlanField: PlanConstants.freePlan,
-            FirestoreConstants.companyPlanExpiryField: DateTime.now().add(const Duration(days: 90))
+            FirestoreConstants.companyPlanExpiryField: DateTime.now().add(const Duration(days: 60))
           });
 
       final companyId = companyRef.id;

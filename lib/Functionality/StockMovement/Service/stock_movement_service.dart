@@ -7,7 +7,6 @@ import 'package:inventorytracker/Shared/Constants/firestore_constants.dart';
 import 'package:inventorytracker/Shared/Constants/movement_constants.dart';
 import '../../Stock/Parameters/stock_params.dart';
 import '../../Stock/Provider/stock_provider.dart';
-import '../../Transaction/Provider/transaction_provider.dart';
 import '../Model/stock_movement_model.dart';
 import '../Provider/stock_movement_provider.dart';
 
@@ -38,37 +37,38 @@ class StockMovementService {
 
 
   // Get batches for product
-  Future<List<BatchModel>> getBatches(
+  Stream<List<BatchModel>> watchBatches(
       String warehouseId,
       String productId,
-      Map<String, String> supplierMap) async {
+      Map<String, String> supplierMap) {
 
     final stockColRef = _warehousesCollectionRef(warehouseId);
 
-    final stockSnap = await stockColRef
+    return stockColRef
         .where(FirestoreConstants.stockProductIdField, isEqualTo: productId)
-        .get();
+        .snapshots()
+        .asyncMap((stockSnap) async{
 
-    if (stockSnap.docs.isEmpty) return [];
+          if (stockSnap.docs.isEmpty) return [];
 
-    final stockId = stockSnap.docs.first.id;
+          final stockId = stockSnap.docs.first.id;
 
-    final batchSnap = await stockColRef.doc(stockId).collection(FirestoreConstants.batchCollection)
-        .where(FirestoreConstants.batchQuantityField, isGreaterThan: 0)
-        .get();
+          final batchSnap = await stockColRef.doc(stockId).collection(FirestoreConstants.batchCollection)
+              .where(FirestoreConstants.batchQuantityField, isGreaterThan: 0)
+              .get();
 
-    // Return batches
-    return batchSnap.docs.map((d) {
-      final data = d.data();
-      final supplierId = data[FirestoreConstants.batchSupplierIdField] ?? '';
-      final supplierName = supplierMap[supplierId] ?? '';
+          return batchSnap.docs.map((d) {
+            final data = d.data();
+            final supplierId = data[FirestoreConstants.batchSupplierIdField] ?? '';
+            final supplierName = supplierMap[supplierId] ?? '';
 
-      return BatchModel.fromMap(
-        d.id,
-        data,
-        supplierName,
-      );
-    }).toList();
+            return BatchModel.fromMap(
+              d.id,
+              data,
+              supplierName,
+            );
+          }).toList();
+    });
   }
 
 
@@ -172,10 +172,10 @@ class StockMovementService {
     });
 
     final query = StockBatchesQuery(warehouseId: warehouseId, stockId: stockId);
-    final recent = MovementQueryParams(warehouseId: warehouseId, type: MovementConstants.inwardMovement);
+    //final recent = MovementQueryParams(warehouseId: warehouseId, type: MovementConstants.inwardMovement);
 
     ref.invalidate(stockBatchesProvider(query));
-    ref.invalidate(recentMovementsProvider(recent));
+    //ref.invalidate(recentMovementsProvider(recent));
   }
 
 
@@ -273,11 +273,11 @@ class StockMovementService {
 
     final query = StockBatchesQuery(warehouseId: warehouseId, stockId: stockId);
     final batchQuery = BatchQuery(warehouseId: warehouseId, productId: productId);
-    final recent = MovementQueryParams(warehouseId: warehouseId, type: MovementConstants.outwardMovement);
+    //final recent = MovementQueryParams(warehouseId: warehouseId, type: MovementConstants.outwardMovement);
 
     ref.invalidate(batchListProvider(batchQuery));
     ref.invalidate(stockBatchesProvider(query));
-    ref.invalidate(recentMovementsProvider(recent));
+    //ref.invalidate(recentMovementsProvider(recent));
   }
 }
   /*

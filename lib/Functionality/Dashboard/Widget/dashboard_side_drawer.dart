@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:inventorytracker/Functionality/Dashboard/Provider/dashboard_provider.dart';
 import 'package:inventorytracker/Routes/app_router.dart';
 import 'package:inventorytracker/Model/app_store_model.dart';
 import 'package:inventorytracker/Shared/Constants/snackbar_color.dart';
@@ -63,6 +64,7 @@ class SideDrawer extends StatelessWidget {
             child: Scrollbar(
               controller: verticalController,
               thumbVisibility: true,
+              thickness: 6.0,
               child: ListView(
                 controller: verticalController,
                 primary: false,
@@ -89,6 +91,7 @@ class SideDrawer extends StatelessWidget {
             padding: const EdgeInsets.all(16.0),
             child: ElevatedButton.icon(
               onPressed: () {
+                ref.read(selectedWarehouseProvider.notifier).state = null;
                 auth.signOut();
                 context.go(AppRoutePaths.login); // Navigate to login
               },

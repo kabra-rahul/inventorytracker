@@ -145,6 +145,7 @@ class _HsnEditPageState extends ConsumerState<HsnEditPage> {
                 label: 'Hsn Name',
                 controller: _codeController,
                 hintText: 'Enter HSN Code',
+                keyboardType: TextInputType.number,
                 validator: validateRequired,
               ),
               const SizedBox(height: SizeConstants.spaceBeforeAndAfterField),
